@@ -17,21 +17,37 @@ class Client
         ( $config ) ? $this->config = $config : $this->config = new App();
     }
 
+    private function findJsonData($string) {
+        // Definisikan pola regular expression untuk mencocokkan data JSON
+        $pattern = '/\{(?:[^{}]|(?R))*\}/';
+    
+        // Cari semua kecocokan pola di dalam string
+        preg_match_all($pattern, $string, $matches);
+    
+        // Hasilnya adalah array dari data JSON yang ditemukan
+        return $matches[0];
+    }
+    
     /**
      * Proses request ke server dengan Guzzlehttp/guzzle
      */
     protected function exec(string $endpoint, string $method = 'GET',array $data = []){
         $client = new \GuzzleHttp\Client();
-        $response = $client->request( $method, $this->config->baseURL . $endpoint, [
-            RequestOptions::JSON => $data
-        ] );
-        
         $result     = [];
-
         try {
+
+            $response = $client->request( $method, $this->config->baseURL . $endpoint, [
+                RequestOptions::JSON => $data
+            ] );
             $result = json_decode($response->getBody()->getContents());
-        } catch (\Throwable $th) {
+        } catch (\GuzzleHttp\Exception\ClientException $th) {
             $result = $th->getMessage();
+
+            // mencari json di dalam string $result
+            $find_json_data = $this->findJsonData($result);
+            if (count($find_json_data) > 0) {
+                $result = json_decode($find_json_data[0]);
+            }
         }
 
         return $result;
