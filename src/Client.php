@@ -15,7 +15,6 @@ class Client
     public function __construct( App $config = null )
     {
         ( $config ) ? $this->config = $config : $this->config = new App();
-        var_dump($this->config);
     }
 
     /**
