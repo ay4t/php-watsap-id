@@ -1,0 +1,22 @@
+{
+    "name": "ay4t/php-watsap-id",
+    "description": "PHP Library API Client for Watsap.id",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Ay4t\\Watsap\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Ayatulloh Ahad R",
+            "email": "kawoel@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require": {
+        "guzzlehttp/guzzle": "^7.8"
+    }
+}
