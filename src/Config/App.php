@@ -19,11 +19,5 @@ class App
      * public baseURL
      * @var string
      */
-    public $baseURL     = '';
-
-    /**
-     * public senderNumber
-     * @var string
-     */
-    public $senderNumber    = '';
+    public $baseURL     = 'https://wa.srv28.wapanels.com';
 }

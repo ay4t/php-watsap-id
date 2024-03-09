@@ -3,6 +3,7 @@
 namespace Ay4t\Watsap;
 
 use Ay4t\Watsap\Config\App;
+use GuzzleHttp\RequestOptions;
 
 class Client
 {
@@ -14,14 +15,27 @@ class Client
     public function __construct( App $config = null )
     {
         ( $config ) ? $this->config = $config : $this->config = new App();
+        var_dump($this->config);
     }
 
     /**
      * Proses request ke server dengan Guzzlehttp/guzzle
      */
-    protected function exec( string $method = 'GET', string $endpoint, array $data = []){
+    protected function exec(string $endpoint, string $method = 'GET',array $data = []){
         $client = new \GuzzleHttp\Client();
-        $response = $client->request( $method, $this->config->baseURL . $endpoint, [] );
+        $response = $client->request( $method, $this->config->baseURL . $endpoint, [
+            RequestOptions::JSON => $data
+        ] );
+        
+        $result     = [];
+
+        try {
+            $result = json_decode($response->getBody()->getContents());
+        } catch (\Throwable $th) {
+            $result = $th->getMessage();
+        }
+
+        return $result;
     }
 
     /**
@@ -31,11 +45,12 @@ class Client
      */
     public function sendText( string $number, string $message )
     {
-        return $this->exec( 'POST', '/send-message', [
+        return $this->exec('/send-message', 'POST', [
             'id_device' => $this->config->deviceID,
-            'api-key' => $this->config->apiKey,
-            'no_hp'   => $number,
-            'pesan'   => $message
+            'api_key' => $this->config->apiKey,
+            'sender' => $this->config->deviceID,
+            'number'   => $number,
+            'message'   => $message
         ]);
     }
 }
